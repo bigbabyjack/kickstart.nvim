@@ -69,7 +69,8 @@ vim.opt.scrolloff = 10
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Move up half page' })
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Move down half page' })
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -89,20 +90,19 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+-- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -149,10 +149,19 @@ require('lazy').setup({
   --
   --  This is equivalent to:
   --    require('Comment').setup({})
-
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
+  {
+    'junegunn/vim-easy-align',
+    keys = { { 'ga', '<Plug>(EasyAlign)', mode = { 'n', 'x' } } },
+    config = function()
+      -- Start interactive EasyAlign in visual mode (e.g. vipga)
+      vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)', { noremap = true })
 
+      -- Start interactive EasyAlign for a motion/text object (e.g. gaip)
+      vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)', { noremap = true })
+    end,
+  },
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
@@ -169,6 +178,14 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+  {
+    'ray-x/lsp_signature.nvim',
+    event = 'VeryLazy',
+    opts = { floating_window = false },
+    config = function(_, opts)
+      require('lsp_signature').setup(opts)
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -802,7 +819,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
